@@ -1,0 +1,33 @@
+#include <queue>
+using namespace std;
+
+class MedianFinder {
+private:
+    priority_queue<int> leftMaxHeap; // Max-heap for the smaller half
+    priority_queue<int, vector<int>, greater<int>> rightMinHeap; // Min-heap for the larger half
+
+public:
+    MedianFinder() {}
+
+    void addNum(int num) {
+        // Step 1: Add to max heap
+        leftMaxHeap.push(num);
+
+        // Step 2: Balance the two heaps so that every element in leftMaxHeap <= rightMinHeap
+        rightMinHeap.push(leftMaxHeap.top());
+        leftMaxHeap.pop();
+
+        // Step 3: Maintain size property (left can have one extra element)
+        if (leftMaxHeap.size() < rightMinHeap.size()) {
+            leftMaxHeap.push(rightMinHeap.top());
+            rightMinHeap.pop();
+        }
+    }
+
+    double findMedian() {
+        if (leftMaxHeap.size() > rightMinHeap.size())
+            return leftMaxHeap.top();  // Odd number of elements
+        else
+            return (leftMaxHeap.top() + rightMinHeap.top()) / 2.0;  // Even number of elements
+    }
+};
